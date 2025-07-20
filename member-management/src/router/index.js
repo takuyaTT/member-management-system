@@ -18,6 +18,12 @@ const router = createRouter({
       name: 'menu',
       component: () => import('@/components/views/HomeMenu.vue'),
       meta: { requiresAuth: true }
+    },
+    {
+      path: '/member',
+      name: 'member',
+      component: () => import('@/components/views/MemberView.vue'),
+      meta: { requiresAuth: true }
     }
   ],
 })

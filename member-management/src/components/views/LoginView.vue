@@ -9,6 +9,7 @@ function login(emitData){
   if(loginUser(userName, password)){
     emits("login",{userName: userName})
   }else {
+    alert(`ログインに失敗しました。`)
     console.log("ログイン失敗")
   }
 
