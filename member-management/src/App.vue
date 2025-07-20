@@ -1,85 +1,68 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import CommonHeader from './components/header/CommonHeader.vue';
+import CommonFooter from './components/footer/CommonFooter.vue';
+import { logoutUser, getAuth } from './components/tools/utils/auth.js'
+import { useRouter } from 'vue-router';
+import { ref,  onUnmounted} from 'vue'
+
+const userName = ref('');
+const isLogin = ref(false);
+const role = ref(0)
+const router = useRouter();
+let auth = getAuth();
+// 認証情報が存在する場合はcreate時に設定
+if(auth){
+  userName.value = auth.userName;
+  isLogin.value = true;
+  role.value = auth.role;
+}
+
+// ログアウト処理
+function handleLogout() {
+  logoutUser();
+  isLogin.value = false
+
+  // ログイン画面へ遷移
+  router.push({
+    name: "login"
+  });
+}
+
+// コンポーネント削除時、ログインデータ削除
+onUnmounted(()=>{
+  logoutUser();
+})
+
+// ログイン処理
+function handleLogin(emitData){
+  // 正常ユーザー（お試し）
+  userName.value = emitData.userName;
+  isLogin.value = true;
+  // 権限を取得
+  auth = getAuth();
+  role.value = auth.role;
+  // ホーム画面へ遷移
+  router.push({
+    name: "menu"
+  });
+}
 </script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+  <div>
+    <CommonHeader
+    :userName="userName"
+    :isLogin="isLogin"
+    @logout="handleLogout"/>
+    <RouterView
+      :isLogin="isLogin"
+      :role="role"
+      @login="handleLogin"
+      @logout="handleLogout"/>
+    <CommonFooter />
+  </div>
 </template>
-
 <style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
+* {
   text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
 }
 </style>

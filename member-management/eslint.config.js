@@ -21,4 +21,9 @@ export default defineConfig([
 
   js.configs.recommended,
   ...pluginVue.configs['flat/essential'],
+  {
+    rules: {
+      'vue/no-v-model-argument': 'off',
+    },
+  },
 ])
